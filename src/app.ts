@@ -9,16 +9,16 @@ const app: Application = express();
 
 // parser
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:5173/api/v1'] }));
+app.use(cors({ origin: ['http://localhost:5173/api/'] }));
 app.use(cookieParser());
 
 // application routes
-app.use('/api/v1', router);
+app.use('/api', router);
 
 const test = (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: 'Running PH University server',
+    message: 'Running Car Wash server',
   });
 };
 
