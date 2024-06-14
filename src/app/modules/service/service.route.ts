@@ -9,13 +9,15 @@ const router = express.Router();
 
 router.post(
   '/',
-  validateRequest(ServiceValidations.createServiceValidationSchema),
   auth(USER_ROLE.admin),
+  validateRequest(ServiceValidations.createServiceValidationSchema),
   serviceControllers.createService,
 );
 
 router.get('/:id', serviceControllers.getSingleService);
 
 router.get('/', serviceControllers.getAllServices);
+
+router.put('/:id', auth(USER_ROLE.admin), serviceControllers.updateService);
 
 export const ServiceRoutes = router;
