@@ -20,4 +20,6 @@ router.get('/', serviceControllers.getAllServices);
 
 router.put('/:id', auth(USER_ROLE.admin), serviceControllers.updateService);
 
+router.delete('/:id', auth(USER_ROLE.admin), serviceControllers.deleteService);
+
 export const ServiceRoutes = router;

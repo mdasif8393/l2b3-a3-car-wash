@@ -35,9 +35,24 @@ const updateService = async (_id: string, payload: Partial<IService>) => {
   return result;
 };
 
+const deleteService = async (_id: string) => {
+  const result = await Service.findByIdAndUpdate(
+    _id,
+    {
+      isDeleted: true,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+  return result;
+};
+
 export const ServiceServices = {
   createService,
   getSingleService,
   getAllServices,
   updateService,
+  deleteService,
 };
