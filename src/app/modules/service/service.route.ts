@@ -14,4 +14,8 @@ router.post(
   serviceControllers.createService,
 );
 
+router.get('/:id', serviceControllers.getSingleService);
+
+router.get('/', serviceControllers.getAllServices);
+
 export const ServiceRoutes = router;

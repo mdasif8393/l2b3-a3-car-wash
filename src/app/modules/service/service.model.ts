@@ -1,27 +1,32 @@
 import { model, Schema } from 'mongoose';
 import { IService } from './service.interface';
 
-const serviceSchema = new Schema<IService>({
-  name: {
-    type: String,
-    required: true,
+const serviceSchema = new Schema<IService>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    duration: {
+      type: Number,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  description: {
-    type: String,
-    required: true,
+  {
+    timestamps: true,
   },
-  price: {
-    type: Number,
-    required: true,
-  },
-  duration: {
-    type: Number,
-    required: true,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-});
+);
 
 export const Service = model<IService>('Service', serviceSchema);
