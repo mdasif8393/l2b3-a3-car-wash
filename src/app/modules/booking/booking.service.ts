@@ -43,7 +43,29 @@ const getAllBookings = async () => {
   return result;
 };
 
+const getSingleBooking = async (tokenWithBearer: string) => {
+  const token = tokenWithBearer.split(' ')[1];
+
+  // decode token and get user
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+
+  const { email } = decoded;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+
+  const result = await Booking.find({ customer: user._id });
+  return result;
+};
+
 export const BookingServices = {
   createBooking,
   getAllBookings,
+  getSingleBooking,
 };

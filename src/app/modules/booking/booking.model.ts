@@ -5,14 +5,17 @@ const bookingSchema = new Schema<IBooking>(
   {
     customer: {
       type: Schema.Types.ObjectId,
+      ref: 'User',
     },
     service: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'Service',
     },
     slot: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: 'Slot',
     },
     vehicleType: {
       type: String,
