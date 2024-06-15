@@ -37,6 +37,13 @@ const createBooking = async (
   return result;
 };
 
+const getAllBookings = async () => {
+  const result = await Booking.find({});
+
+  return result;
+};
+
 export const BookingServices = {
   createBooking,
+  getAllBookings,
 };
