@@ -17,6 +17,15 @@ const createService = catchAsync(async (req, res) => {
 const getSingleService = catchAsync(async (req, res) => {
   const result = await ServiceServices.getSingleService(req.params.id);
 
+  if (!result) {
+    res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: 404,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -27,6 +36,15 @@ const getSingleService = catchAsync(async (req, res) => {
 
 const getAllServices = catchAsync(async (req, res) => {
   const result = await ServiceServices.getAllServices();
+
+  if (result.length <= 0) {
+    res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: 404,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -42,7 +60,7 @@ const updateService = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Services retrieved successfully',
+    message: 'Service updated successfully',
     data: result,
   });
 });

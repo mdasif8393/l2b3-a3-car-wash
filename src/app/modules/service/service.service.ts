@@ -4,6 +4,11 @@ import { IService } from './service.interface';
 import { Service } from './service.model';
 
 const createService = async (payload: Partial<IService>) => {
+  const isServiceExists = await Service.findOne({ name: payload?.name });
+  if (isServiceExists) {
+    throw new AppError(httpStatus.CONFLICT, 'This service is already exists');
+  }
+
   const result = await Service.create(payload);
 
   return result;

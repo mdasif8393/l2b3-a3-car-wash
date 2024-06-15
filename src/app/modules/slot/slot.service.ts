@@ -5,6 +5,7 @@ import { ISlot } from './slot.interface';
 import { Slot } from './slot.model';
 
 const createSlot = async (payload: ISlot) => {
+  // if service not found show error
   const service = await Service.findById(payload.service);
   if (!service) {
     throw new AppError(httpStatus.NOT_FOUND, 'Service not found');
@@ -28,19 +29,17 @@ const createSlot = async (payload: ISlot) => {
     const newStartTime = new Date(`1970-01-01T${newSchedule.startTime}`);
     const newEndTime = new Date(`1970-01-01T${newSchedule.endTime}`);
 
-    // 10:30 - 12: 30 Existing in Database
-    // 9:30 - 11: 30
+    // if new slots are conflict with database slots show error
     if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
       throw new AppError(
         httpStatus.CONFLICT,
-        `This slot is booked! Please try another slot`,
+        `This slot is already created! try another time slot`,
       );
     }
   });
-  //   console.log(startTime);
 
+  // slot duration
   const { duration: intervalMinutes } = service;
-  //   console.log(intervalMinutes);
 
   const hoursFromStartTime = Number(startTime.split(':')[0]) * 60;
   const minutesFromStartTime = Number(startTime.split(':')[1]);
@@ -50,9 +49,10 @@ const createSlot = async (payload: ISlot) => {
   const minutesFromEndTime = Number(payload.endTime.split(':')[1]);
   const endTimeToMinute = hoursFromEndTime + minutesFromEndTime;
 
+  // calculate total minutes of service
   const totalMinutes = endTimeToMinute - startTimeToMinute;
 
-  // make available slots function
+  // create available slots function
   function createTimeSlots(
     startTime: string,
     intervalMinutes: number,

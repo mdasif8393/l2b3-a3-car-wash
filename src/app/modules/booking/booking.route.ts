@@ -13,12 +13,12 @@ router.post(
   BookingControllers.createBooking,
 );
 
-router.get('/', auth(USER_ROLE.admin), BookingControllers.getAllBookings);
-
-export const GetSingleBookingRoute = router.get(
-  '/',
+router.get(
+  '/my-bookings',
   auth(USER_ROLE.user),
   BookingControllers.getSingleBooking,
 );
+
+router.get('/', auth(USER_ROLE.admin), BookingControllers.getAllBookings);
 
 export const BookingRoutes = router;

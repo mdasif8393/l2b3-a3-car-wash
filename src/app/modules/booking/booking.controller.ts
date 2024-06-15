@@ -20,6 +20,15 @@ const createBooking = catchAsync(async (req, res) => {
 const getAllBookings = catchAsync(async (req, res) => {
   const result = await BookingServices.getAllBookings();
 
+  if (result.length <= 0) {
+    res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: 404,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -32,6 +41,15 @@ const getSingleBooking = catchAsync(async (req, res) => {
   const result = await BookingServices.getSingleBooking(
     req.headers.authorization as string,
   );
+
+  if (result.length <= 0) {
+    res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      statusCode: 404,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

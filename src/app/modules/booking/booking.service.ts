@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import config from '../../config';
 import AppError from '../../errors/AppError';
+import { Slot } from '../slot/slot.model';
 import { User } from '../user/user.model';
 import { IBooking } from './booking.interface';
 import { Booking } from './booking.model';
@@ -28,17 +31,49 @@ const createBooking = async (
 
   const userId = user._id;
 
+  const isSlotExists = await Slot.findOne({ _id: payload.slot });
+
+  if (!isSlotExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Can not find slot');
+  }
+
+  if (
+    isSlotExists.isBooked === 'booked' ||
+    isSlotExists.isBooked === 'canceled'
+  ) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'The slot is not available for booking',
+    );
+  }
+
   const payloadSlotWithUserId = payload;
 
   payloadSlotWithUserId['customer'] = userId;
 
-  const result = await Booking.create(payloadSlotWithUserId);
+  const session = await mongoose.startSession();
 
-  return result;
+  try {
+    session.startTransaction();
+
+    // booked slot
+    await Slot.findOneAndUpdate({ _id: payload.slot }, { isBooked: 'booked' });
+
+    //crate booking
+    const result = await Booking.create([payloadSlotWithUserId], { session });
+    return result;
+
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (err: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
+  }
 };
 
 const getAllBookings = async () => {
-  const result = await Booking.find({});
+  const result = await Booking.find({}).populate('customer');
 
   return result;
 };
