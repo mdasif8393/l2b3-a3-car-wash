@@ -6,17 +6,21 @@ import AppError from '../../errors/AppError';
 import { TLoginUser, TUser } from './user.interface';
 import { User } from './user.model';
 
+// sign up user
 const createUserIntoDB = async (payload: TUser) => {
   const result = await User.create(payload);
   return result;
 };
 
+// login user
 const loginUser = async (payload: TLoginUser) => {
+  // if user not found show not found error
   const user = await User.findOne({ email: payload.email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
+  // password validation
   const isPasswordMatch = await bcrypt.compare(payload.password, user.password);
   if (!isPasswordMatch) {
     throw new AppError(
@@ -29,12 +33,15 @@ const loginUser = async (payload: TLoginUser) => {
     email: user.email,
     role: user.role,
   };
+
+  // create access token
   const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
     expiresIn: config.jwt_access_expires_in,
   });
 
   return {
     accessToken,
+    user,
   };
 };
 

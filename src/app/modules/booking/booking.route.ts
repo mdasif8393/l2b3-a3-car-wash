@@ -15,8 +15,8 @@ router.post(
 
 router.get('/', auth(USER_ROLE.admin), BookingControllers.getAllBookings);
 
-router.get(
-  '/my-bookings',
+export const GetSingleBookingRoute = router.get(
+  '/',
   auth(USER_ROLE.user),
   BookingControllers.getSingleBooking,
 );
