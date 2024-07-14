@@ -22,7 +22,8 @@ const getSingleService = async (_id: string) => {
 
 const getAllServices = async () => {
   const result = await Service.find({});
-  return result;
+  const resultOfNonDeletedUsers = result.filter((user) => !user.isDeleted);
+  return resultOfNonDeletedUsers;
 };
 
 const updateService = async (_id: string, payload: Partial<IService>) => {
