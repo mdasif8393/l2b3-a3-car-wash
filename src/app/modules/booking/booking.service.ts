@@ -57,14 +57,29 @@ const createBooking = async (
     session.startTransaction();
 
     // booked slot
-    await Slot.findOneAndUpdate({ _id: payload.slot }, { isBooked: 'booked' });
+    const updateSlot = await Slot.findOneAndUpdate(
+      { _id: payload.slot },
+      { isBooked: 'booked' },
+    );
+    if (!updateSlot) {
+      throw new AppError(httpStatus.NOT_MODIFIED, 'Failed to update slot');
+    }
 
     //crate booking
-    const result = await Booking.create([payloadSlotWithUserId], { session });
-    return result;
+    const bookedSlot = await Booking.create([payloadSlotWithUserId], {
+      session,
+    });
 
+    if (!bookedSlot) {
+      throw new AppError(
+        httpStatus.NOT_IMPLEMENTED,
+        'Failed to create booked slot',
+      );
+    }
     await session.commitTransaction();
     await session.endSession();
+
+    return bookedSlot;
   } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
