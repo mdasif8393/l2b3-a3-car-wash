@@ -8,6 +8,11 @@ import { User } from './user.model';
 
 // sign up user
 const createUserIntoDB = async (payload: TUser) => {
+  payload.password = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
   const result = await User.create(payload);
   return result;
 };
